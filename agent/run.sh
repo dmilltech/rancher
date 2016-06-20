@@ -193,17 +193,14 @@ launch_agent()
 
 resolve_var_lib_docker()
 {
-    #local dir="$(docker inspect -f '{{ index .Volumes "/var/lib/cattle" }}' rancher-agent-state)"
     local dir="$(docker inspect -f '{{ range .Mounts }}{{ if eq .Destination "/var/lib/cattle" }}{{ .Source }}{{ end }}{{ end }}' rancher-agent-state)"
     echo $(dirname $(dirname $(dirname $dir)))
 }
 
 verify_docker_client_server_version()
 {
-    #local client_version=$(docker version |grep Client\ version | cut -d":" -f2)
     local client_version=$(docker -v | cut -d " " -f3 | sed 's/,$//')
     info "Checking for Docker version >=" $client_version
-    #docker version 2>&1 | grep Server\ version >/dev/null || {
     docker -v | cut -d " " -f3 | sed 's/,$//' >/dev/null || {
         echo "Please ensure Host Docker version is >=${client_version} and container has r/w permissions to docker.sock" 1>&2
         exit 1
