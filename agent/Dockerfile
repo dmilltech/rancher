@@ -1,10 +1,11 @@
-FROM ubuntu:14.04.4
+OM ubuntu:14.04.4
 RUN apt-get update && \
      apt-get install --no-install-recommends -y \
      arptables \
      bridge-utils \
      ca-certificates \
      curl \
+     wget \
      iptables \
      libssl-dev \
      libffi-dev \
@@ -20,9 +21,11 @@ RUN apt-get update && \
     pip install --upgrade requests[security]==2.9.1 &&\
     apt-get remove -y --purge make libffi-dev libssl-dev gcc && apt-get autoremove -y && \
     rm -rf /tmp/Python-2.7.11 && \
-    curl -s http://stedolan.github.io/jq/download/linux64/jq > /usr/bin/jq; chmod +x /usr/bin/jq && \
-    curl -s -L https://get.docker.com/builds/Linux/x86_64/docker-1.6.0 > /usr/bin/docker; chmod +x /usr/bin/docker && \
-    curl -s -L https://get.docker.com/builds/Linux/x86_64/docker-1.9.1 > /usr/bin/docker-1.9; chmod +x /usr/bin/docker-1.9
+    curl -s http://stedolan.github.io/jq/download/linux64/jq > /usr/bin/jq; chmod +x /usr/bin/jq
+
+RUN wget https://get.docker.com/builds/Linux/x86_64/docker-1.11.2.tgz && \
+     tar -xzvf docker-1.11.2.tgz && \
+     mv docker/* /usr/bin/
 
 RUN mkdir -p /var/lib/cattle /var/lib/rancher
 COPY register.py resolve_url.py run.sh /
